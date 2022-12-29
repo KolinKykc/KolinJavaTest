@@ -13,15 +13,14 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Builder
+@Table(name = "Orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @OneToMany(fetch = FetchType.LAZY)
     private List<Item> items;
-
 
 }
