@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.kolinjavatest.kolinjavatest.Services"})
+@ComponentScan(basePackages = {"com.kolinjavatest.kolinjavatest"})
 @EnableAutoConfiguration
 public class KolinJavaTestApplication {
 

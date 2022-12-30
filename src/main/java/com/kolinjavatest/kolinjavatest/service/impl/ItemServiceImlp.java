@@ -1,6 +1,7 @@
 package com.kolinjavatest.kolinjavatest.service.impl;
 
 import com.kolinjavatest.kolinjavatest.dto.ItemDto;
+import com.kolinjavatest.kolinjavatest.exceptions.OrderNotFoundException;
 import com.kolinjavatest.kolinjavatest.model.Item;
 import com.kolinjavatest.kolinjavatest.model.Order;
 import com.kolinjavatest.kolinjavatest.repository.ItemRepository;
@@ -28,25 +29,6 @@ public class ItemServiceImlp implements ItemService {
     @Autowired
     OrderRepository orderRepository;
 
-    @Override
-    public void createItem(ItemDto itemDto) {
-        try {
-            itemRepository.save(convertToEntity(itemDto));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void updateItem(Long id, ItemDto itemDto) {
-
-    }
-
-    @Override
-    public void deleteItem(ItemDto itemDto) {
-
-    }
-
     @Transactional
     public List<ItemDto> getItemsByOrderId(Long orderId) {
         Optional<Order> order = orderRepository.findOrderById(orderId);
@@ -56,14 +38,34 @@ public class ItemServiceImlp implements ItemService {
     }
 
 
-    private Item convertToEntity(ItemDto itemDto) throws ParseException {
-
-        return modelMapper.map(itemDto, Item.class);
+    @Override
+    public Item mapToItem(ItemDto itemDto, Order order) {
+        return Item.builder()
+                .name(itemDto.getName())
+                .unitPrice(itemDto.getUnitPrice())
+                .quantity(itemDto.getQuantity())
+                .order(order)
+                .build();
     }
-    // CONVERTING DTO-ENTITY
 
-    private ItemDto convertToDto(Optional<Item> item) {
-        return modelMapper.map(item.get(), ItemDto.class);
+
+    //TODO remove or not?
+    @Transactional
+    public void item(ItemDto itemDto) {
+        Order order = orderRepository.findById(itemDto.getOrderId())
+                .orElseThrow(() -> new OrderNotFoundException("Post Not Found with ID - " + itemDto.getOrderId()));
+        List<Item> items = itemRepository.findAllByOrder(Optional.ofNullable(order));
+        items.add(mapToItem(itemDto, order));
+        order.setItems(items);
+        float total = 0;
+        for(Item item: items){
+           int quantity = item.getQuantity();
+           float unitePrice = item.getUnitPrice();
+           total+= quantity*unitePrice;
+        }
+        order.setTotal(total);
+        itemRepository.save(mapToItem(itemDto, order));
+        orderRepository.save(order);
     }
 
     private List<ItemDto> convertToDtoList(List<Item> item) {
@@ -76,3 +78,23 @@ public class ItemServiceImlp implements ItemService {
     }
 
 }
+
+/*    @Override
+    public void createItem(ItemDto itemDto) {
+        try {
+            itemRepository.save(convertToEntity(itemDto));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }   //Convert dto to entity
+
+    private Item convertToEntity(ItemDto itemDto) throws ParseException {
+
+        return modelMapper.map(itemDto, Item.class);
+    }
+    // CONVERTING entity to dto
+
+    private ItemDto convertToDto(Optional<Item> item) {
+        return modelMapper.map(item.get(), ItemDto.class);
+    }
+*/

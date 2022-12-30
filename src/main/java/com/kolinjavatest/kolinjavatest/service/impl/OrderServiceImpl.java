@@ -2,6 +2,8 @@ package com.kolinjavatest.kolinjavatest.service.impl;
 
 
 import com.kolinjavatest.kolinjavatest.dto.OrderDto;
+import com.kolinjavatest.kolinjavatest.dto.OrderRequestDto;
+import com.kolinjavatest.kolinjavatest.dto.OrderResponseDto;
 import com.kolinjavatest.kolinjavatest.exceptions.OrderNotFoundException;
 import com.kolinjavatest.kolinjavatest.model.Order;
 import com.kolinjavatest.kolinjavatest.repository.OrderRepository;
@@ -9,8 +11,10 @@ import com.kolinjavatest.kolinjavatest.service.OrderService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,10 +25,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     ModelMapper modelMapper;
+
+    @Transactional(readOnly = true)
+    public OrderResponseDto getOrderById(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(id.toString()));
+        return modelMapper.map(order, OrderResponseDto.class);
+    }
     @Override
-    public void createOrder(OrderDto orderDto) {
+    public void createOrder(OrderRequestDto orderRequestDto) {
+        Order order = new Order();
+        order.setItems(orderRequestDto.getItems());
+
         try {
-            orderRepository.save(convertToEntity(orderDto));
+            orderRepository.save(convertToEntity(orderRequestDto));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -32,11 +46,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateOrder(Long id, OrderDto orderDto) {
+    public void updateOrder(Long id, OrderRequestDto orderRequestDto) {
         Optional<Order> existedOrder = orderRepository.findOrderById(id);
         if (!existedOrder.isPresent())
             throw new OrderNotFoundException("Order not found");
-        Order exOrder = existedOrder.get();
+        Order order = modelMapper.map(orderRequestDto, Order.class);
+        orderRepository.save(order);
+
 
     }
 
@@ -45,8 +61,15 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.deleteById(id);
 
     }
-    private Order convertToEntity(OrderDto orderDto) throws ParseException {
 
-        return modelMapper.map(orderDto, Order.class);
+    @Override
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+
+    private Order convertToEntity(OrderRequestDto orderRequestDto) throws ParseException {
+
+        return modelMapper.map(orderRequestDto, Order.class);
     }
 }

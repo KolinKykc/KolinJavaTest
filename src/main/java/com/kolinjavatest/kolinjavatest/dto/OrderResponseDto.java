@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDto {
+public class OrderResponseDto {
     private Long orderId;
-    private String name;
-    private Float unitPrice;
-    private Integer quantity;
-
+    private Float total = 0f;
 }

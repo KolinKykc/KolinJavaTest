@@ -1,16 +1,16 @@
 package com.kolinjavatest.kolinjavatest.dto;
 
+import com.kolinjavatest.kolinjavatest.model.Item;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDto {
-    private Long orderId;
-    private String name;
-    private Float unitPrice;
-    private Integer quantity;
+public class OrderRequestDto {
+    private List<Item> items;
 
 }

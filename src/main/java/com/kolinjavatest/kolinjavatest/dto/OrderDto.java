@@ -12,5 +12,5 @@ import lombok.Builder;
 @Builder
 public class OrderDto {
     private Long id;
-    private Float totalAmount;
+    private Float totalAmount = 0f;
 }

@@ -1,5 +1,6 @@
 package com.kolinjavatest.kolinjavatest.model;
 
+import com.kolinjavatest.kolinjavatest.dto.ItemDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,10 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Float total;
+
     @OneToMany(fetch = FetchType.LAZY)
     private List<Item> items;
+
 
 }
