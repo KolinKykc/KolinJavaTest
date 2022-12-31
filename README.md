@@ -57,8 +57,6 @@ GET /orders/{Id}
 POST /orders/{Id}
 
 DELETE /orders/{Id}
-
 ```
 
-
-
+You can test them using postman or any other rest client.
