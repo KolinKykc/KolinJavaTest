@@ -25,7 +25,7 @@ public class OrderController {
     OrderService orderService;
 
     @PostMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, OrderRequestDto orderRequestDto) {
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody OrderRequestDto orderRequestDto) {
         orderService.updateOrder(id, orderRequestDto);
         return new ResponseEntity<>("updated", HttpStatus.OK);
     }
@@ -37,13 +37,19 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderResponseDto> getOrder(@PathVariable Long id) {
+    public ResponseEntity<Order> getOrder(@PathVariable Long id) {
         return status(HttpStatus.OK).body(orderService.getOrderById(id));
     }
 
     @GetMapping
     public ResponseEntity<List<Order>> getAllOrders() {
         return status(HttpStatus.OK).body(orderService.getAllOrders());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        orderService.deleteOrder(id);
+        return new ResponseEntity<>("deleted", HttpStatus.OK);
     }
 
 }

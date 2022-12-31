@@ -1,6 +1,7 @@
 package com.kolinjavatest.kolinjavatest.model;
 
-import jakarta.annotation.Nullable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +29,7 @@ public class Item {
     private Integer quantity;
 
     @ManyToOne(fetch = LAZY)
+    @JsonIgnore
     @JoinColumn(name = "id", referencedColumnName = "id")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Order order;
 }

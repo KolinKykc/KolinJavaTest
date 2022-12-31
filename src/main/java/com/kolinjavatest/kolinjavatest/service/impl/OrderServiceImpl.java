@@ -5,6 +5,7 @@ import com.kolinjavatest.kolinjavatest.dto.OrderDto;
 import com.kolinjavatest.kolinjavatest.dto.OrderRequestDto;
 import com.kolinjavatest.kolinjavatest.dto.OrderResponseDto;
 import com.kolinjavatest.kolinjavatest.exceptions.OrderNotFoundException;
+import com.kolinjavatest.kolinjavatest.model.Item;
 import com.kolinjavatest.kolinjavatest.model.Order;
 import com.kolinjavatest.kolinjavatest.repository.OrderRepository;
 import com.kolinjavatest.kolinjavatest.service.OrderService;
@@ -27,21 +28,22 @@ public class OrderServiceImpl implements OrderService {
     ModelMapper modelMapper;
 
     @Transactional(readOnly = true)
-    public OrderResponseDto getOrderById(Long id) {
+    public Order getOrderById(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException(id.toString()));
-        return modelMapper.map(order, OrderResponseDto.class);
+        return order;
     }
     @Override
     public void createOrder(OrderRequestDto orderRequestDto) {
         Order order = new Order();
         order.setItems(orderRequestDto.getItems());
-
-        try {
-            orderRepository.save(convertToEntity(orderRequestDto));
-        } catch (ParseException e) {
-            e.printStackTrace();
+        List<Item> items = orderRequestDto.getItems();
+        float total = 0f;
+        for (Item i:items){
+            total+=i.getQuantity()*i.getUnitPrice();
         }
+        order.setTotal(total);
+        orderRepository.save(order);
 
     }
 
@@ -50,11 +52,17 @@ public class OrderServiceImpl implements OrderService {
         Optional<Order> existedOrder = orderRepository.findOrderById(id);
         if (!existedOrder.isPresent())
             throw new OrderNotFoundException("Order not found");
-        Order order = modelMapper.map(orderRequestDto, Order.class);
+        Order order = new Order();
+        order.setId(id);
+        order.setItems(orderRequestDto.getItems());
+        List<Item> items = orderRequestDto.getItems();
+        float total = 0f;
+        for (Item i:items){
+            total+=i.getQuantity()*i.getUnitPrice();
+        }
+        order.setTotal(total);
         orderRepository.save(order);
-
-
-    }
+       }
 
     @Override
     public void deleteOrder(Long id) {
