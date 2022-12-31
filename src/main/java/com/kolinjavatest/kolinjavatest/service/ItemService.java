@@ -8,13 +8,8 @@ import java.util.List;
 
 public interface ItemService {
 
-
-    //void createItem(ItemDto itemDto);
-    //void updateItem(Long id, ItemDto itemDto);
-    //void deleteItem(ItemDto itemDto);
-
     List<ItemDto> getItemsByOrderId(Long orderId);
-    void item(ItemDto itemDto); //Creates item to order
+    void item(ItemDto itemDto);
     Item mapToItem(ItemDto itemDto, Order order);
 }
 

@@ -78,23 +78,3 @@ public class ItemServiceImlp implements ItemService {
     }
 
 }
-
-/*    @Override
-    public void createItem(ItemDto itemDto) {
-        try {
-            itemRepository.save(convertToEntity(itemDto));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }   //Convert dto to entity
-
-    private Item convertToEntity(ItemDto itemDto) throws ParseException {
-
-        return modelMapper.map(itemDto, Item.class);
-    }
-    // CONVERTING entity to dto
-
-    private ItemDto convertToDto(Optional<Item> item) {
-        return modelMapper.map(item.get(), ItemDto.class);
-    }
-*/

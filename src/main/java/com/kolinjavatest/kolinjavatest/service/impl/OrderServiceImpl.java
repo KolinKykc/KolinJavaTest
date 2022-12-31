@@ -77,7 +77,6 @@ public class OrderServiceImpl implements OrderService {
 
 
     private Order convertToEntity(OrderRequestDto orderRequestDto) throws ParseException {
-
         return modelMapper.map(orderRequestDto, Order.class);
     }
 }
